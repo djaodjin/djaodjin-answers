@@ -1,0 +1,25 @@
+{% extends "answers/base.html" %}
+{% load i18n %}
+
+{% block document %}
+<div class="page-header">
+  <form class="form-search row-fluid" method="get" action="{% url 'answers_search' %}">
+    <div class="input-append row-fluid">
+      <input type="text" class="span10 search-query" name="q">
+      <input type="submit" class="btn btn-primary" value="{% trans 'Search' %}" />
+    </div>
+  </form>
+</div>
+
+<div>
+  <h2>Latest questions</h2>
+  {% if question_list %}
+  {% for question in question_list %}
+  {% include "answers/question_short.html" %}
+  {% endfor %}
+  {% else %}
+  <i>No Questions yet</i>
+  {% endif %}
+</div>
+{% endblock %}
+
