@@ -129,9 +129,9 @@ def question_vote(request, question_id, direction):
     # Auto subscribe User when he/she upvoted a question.
     if direction == 'up':
         Follow.objects.subscribe(request.user, question)
-        messages.success(request,
-            _('You will now receive an e-mail for new comments on "%s".'
-              % question.title))
+        # messages.success(request,
+ #            _('You will now receive an e-mail for new comments on "%s".'
+ #              % question.title))
 
     return vote_on_object(
         request, model=Question,
