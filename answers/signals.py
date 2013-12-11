@@ -30,19 +30,21 @@ Signals logic to trigger events in connected apps.
 from django.dispatch import receiver
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_noop as _
-from django.contrib.comments.signals import comment_was_posted
+from django_comments.signals import comment_was_posted
 from django.db.models.signals import post_syncdb
 import notification.models as notification
 
 from .models import Follow, Question
-
+from .settings import OBJECT_TITLE
 
 @receiver(post_syncdb, sender=notification)
 def create_notice_types(app, created_models, verbosity, **kwargs):
     notification.NoticeType.create(
-        "question_new", _("New question"), _("A new question was submitted"))
+        "question_new", _("New %s" % OBJECT_TITLE),
+        _("A new %s was submitted" % OBJECT_TITLE))
     notification.NoticeType.create(
-        "question_updated", _("Question updated"), _("A question was updated"))
+        "question_updated", _("%s updated" % OBJECT_TITLE.capitalize()),
+        _("A %s was updated" % OBJECT_TITLE))
 
 
 @receiver(comment_was_posted)
