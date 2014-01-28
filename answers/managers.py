@@ -24,9 +24,10 @@
 #   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 
+UserModel = get_user_model()
 
 class FollowManager(models.Manager):
 
@@ -35,8 +36,9 @@ class FollowManager(models.Manager):
         Get a list of followers for a Question.
         """
         ctype = ContentType.objects.get_for_model(question)
-        return User.objects.filter(follow__object_id=question._get_pk_val(),
-                                   follow__content_type=ctype)
+        return UserModel.objects.filter(
+            follow__object_id=question._get_pk_val(),
+            follow__content_type=ctype)
 
 
     def subscribe(self, user, question):

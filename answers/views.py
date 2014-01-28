@@ -26,7 +26,6 @@
 import logging
 
 from django.contrib import messages
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 from django.shortcuts import redirect, render, get_object_or_404
@@ -38,6 +37,7 @@ from haystack.query import SearchQuerySet
 import notification.models as notification
 from voting.views import vote_on_object
 
+from .managers import UserModel
 from .models import Follow, Question
 from .forms import QuestionNewForm
 from .signals import on_answer_posted
@@ -105,7 +105,7 @@ def question_new(request):
 
             # Send notification to the staff that a Question was created.
             try:
-                users_to_notify = User.objects.filter(is_staff=True)
+                users_to_notify = UserModel.objects.filter(is_staff=True)
                 notification.send(
                     users_to_notify, "question_new", {'question': question})
             except:
@@ -129,9 +129,9 @@ def question_vote(request, question_id, direction):
     # Auto subscribe User when he/she upvoted a question.
     if direction == 'up':
         Follow.objects.subscribe(request.user, question)
-        # messages.success(request,
- #            _('You will now receive an e-mail for new comments on "%s".'
- #              % question.title))
+        messages.success(request,
+            _('You will now receive an e-mail for new comments on "%s".'
+              % question.title))
 
     return vote_on_object(
         request, model=Question,

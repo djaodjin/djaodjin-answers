@@ -24,21 +24,19 @@
 #   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from django.db import models
-from django.db.models import ForeignKey, CharField, TextField, DateTimeField
-from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 
 from voting.models import Vote
-from .managers import FollowManager
+from .managers import FollowManager, UserModel
 
 
 class Follow(models.Model):
     """
     A relationship intended for a User to follow comments on a Question.
     """
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(UserModel, db_column='user_id')
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     object = generic.GenericForeignKey('content_type', 'object_id')
@@ -63,11 +61,11 @@ class Question(models.Model):
     class Meta:
         ordering = ('-submit_date',)
 
-    submit_date = DateTimeField(auto_now_add=True)
-    user = ForeignKey(User)
-    referer = TextField(verbose_name=_('Referer'), blank=True, null=True)
-    title = CharField(verbose_name=_('Title'), max_length=255)
-    text = TextField(verbose_name=_('Text'),
+    submit_date = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(UserModel, db_column='user_id')
+    referer = models.TextField(verbose_name=_('Referer'), blank=True, null=True)
+    title = models.CharField(verbose_name=_('Title'), max_length=255)
+    text = models.TextField(verbose_name=_('Text'),
                      help_text=_("Question being asked"))
     votes = generic.GenericRelation(Vote,
                                     object_id_field="object_id",
