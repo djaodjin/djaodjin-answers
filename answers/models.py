@@ -27,16 +27,16 @@ from django.db import models
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
-from voting.models import Vote
-from .managers import FollowManager, UserModel
+from .managers import FollowManager
 
 
 class Follow(models.Model):
     """
     A relationship intended for a User to follow comments on a Question.
     """
-    user = models.ForeignKey(UserModel, db_column='user_id')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='user_id')
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     object = generic.GenericForeignKey('content_type', 'object_id')
@@ -62,12 +62,12 @@ class Question(models.Model):
         ordering = ('-submit_date',)
 
     submit_date = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(UserModel, db_column='user_id')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='user_id')
     referer = models.TextField(verbose_name=_('Referer'), blank=True, null=True)
     title = models.CharField(verbose_name=_('Title'), max_length=255)
     text = models.TextField(verbose_name=_('Text'),
                      help_text=_("Question being asked"))
-    votes = generic.GenericRelation(Vote,
+    votes = generic.GenericRelation('voting.Vote',
                                     object_id_field="object_id",
                                     content_type_field="content_type")
     followers = generic.GenericRelation(Follow,
