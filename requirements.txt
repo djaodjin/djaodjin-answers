@@ -1,5 +1,3 @@
 Django
 django-voting
 django-haystack
-django-notification
-

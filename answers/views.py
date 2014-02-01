@@ -34,13 +34,12 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 
 from haystack.query import SearchQuerySet
-import notification.models as notification
 from voting.views import vote_on_object
 
 from .managers import UserModel
 from .models import Follow, Question
 from .forms import QuestionNewForm
-from .signals import on_answer_posted
+from answers import signals
 
 LOGGER = logging.getLogger(__name__)
 
@@ -104,14 +103,8 @@ def question_new(request):
             messages.success(request, _("Thank you for your question !"))
 
             # Send notification to the staff that a Question was created.
-            try:
-                users_to_notify = UserModel.objects.filter(is_staff=True)
-                notification.send(
-                    users_to_notify, "question_new", {'question': question})
-            except:
-                LOGGER.error("There was a problem notifiying staff "
-                             "about creation of question #%d.", question.id)
-
+            signals.question_new.send(
+                sender=__name__, question=question, request=request)
             return redirect(question)
     else:
         question_form = QuestionNewForm(initial={'referer': referer},
