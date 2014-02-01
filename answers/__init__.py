@@ -2,4 +2,4 @@
 Community forum for Questions and Answers.
 """
 
-import signals
+__version__ = '0.1'
