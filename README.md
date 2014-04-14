@@ -16,7 +16,6 @@ The source code is bundled with a sample django project.
     $ git clone https://github.com/djaodjin/djaodjin-answers.git
     $ pip install -r requirements.txt
 
-    $ cd testsite
     $ python manage.py syncdb
     $ python manage.py runserver
 

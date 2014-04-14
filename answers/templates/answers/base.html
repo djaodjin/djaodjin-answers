@@ -1,23 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container-fluid">
-  <div class="row-fluid">
-    <div class="span9">
-      {% block document %}
-      {% endblock %}
-    </div>
-    <div class="span3">
-      <div class="well sidebar-nav">
-        {% block sidebar %}
-        <a class="btn btn-primary" href="{% url 'answers_new' %}">Ask a Question</a>
-        <!-- XXX Hack to look good. -->
-        <p style="padding-top: 1em;">
-          This is a public forum.
-        </p>
-        {% endblock %}
-      </div>
-    </div>
-  </div>
+<div>
+  {% block document %}
+  {% endblock %}
+</div>
+<div>
+  {% block sidebar %}
+  <p>
+    <a href="{% url 'answers_new' %}">Ask a Question</a>
+  </p>
+  <p>
+    This is a public forum.
+  </p>
+  {% endblock %}
 </div>
 {% endblock %}

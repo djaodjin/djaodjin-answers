@@ -2,11 +2,11 @@
 {% load i18n %}
 
 {% block document %}
-<div class="page-header">
-  <form class="form-search row-fluid" method="get" action="{% url 'answers_search' %}">
-    <div class="input-append row-fluid">
-      <input type="text" class="span10 search-query" name="q">
-      <input type="submit" class="btn btn-primary" value="{% trans 'Search' %}" />
+<div>
+  <form method="get" action="{% url 'answers_search' %}">
+    <div>
+      <input type="text" name="q">
+      <input type="submit" value="{% trans 'Search' %}" />
     </div>
   </form>
 </div>

@@ -2,23 +2,24 @@
 {% load i18n %}
 
 {% block document %}
-<div class="page-header">
+<div>
   <h1>Ask a Question</h1>
-  <p>Submit a new public question, and we'll answer it as soon as we can. All fields are required.</p>
+  <p>
+    Submit a new public question, and we'll answer it as soon as we can.
+    All fields are required.
+  </p>
 </div>
-<form class="form-comment" method="post" action=".">
-  {{ question_form.as_p }}
-  <!-- XXX Need to be fixed
-       <input type="submit" class="btn" value="{% trans 'Preview' %}" /> -->
-  <input type="submit" class="btn btn-primary" value="{% trans 'Submit' %}" />
+<form method="post" action=".">
   {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="{% trans 'Submit' %}" />
 </form>
 {% endblock %}
 
 
 {% block sidebar %}
 <h4>Submission tips</h4>
-<ul class="unstyled">
+<ul>
   <li>Format your title in the form of a question.</li>
   <li>Provide as much detail as you can.</li>
   <li>This is a public forum.</li>

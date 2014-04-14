@@ -22,43 +22,14 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from haystack import __version__ as haystack_version
-from haystack import indexes
+from django.conf.urls import patterns, url
 
-from answers.models import Question
+from answers import views
 
-if haystack_version[0] < 2:
-    # Dealing with incompatibilities between haystack 1.2+ and 2+
-    #http://django-haystack.readthedocs.org/en/latest/migration_from_1_to_2.html
-    class Indexable(object):
-        pass
-else:
-    from haystack.indexes import Indexable
-
-
-class QuestionIndex(indexes.SearchIndex, Indexable):
-    text = indexes.CharField(document=True, use_template=True)
-
-    def get_model(self):
-        return Question
-
-    def index_queryset(self, using=None):
-        """
-        Used when the entire index for model is updated.
-        """
-        return self.get_model().objects.all()
-
-    def get_queryset(self):
-        """Haystack 1.X series."""
-        return self.index_queryset()
-
-
-try:
-    from haystack import site #pylint: disable=no-name-in-module
-    site.register(Question, QuestionIndex)
-except ImportError: # haystack >= 2
-    pass
-
-
-
-
+urlpatterns = patterns('',
+    url(r'^$', views.QuestionListView.as_view(), name='answers_list'),
+    url(r'^search/$',
+        views.QuestionSearchView.as_view(), name='answers_search'),
+    url(r'^(?P<pk>\d+)/$',
+         views.QuestionDetailView.as_view(), name='answers_detail'),
+)

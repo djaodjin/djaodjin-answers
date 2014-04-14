@@ -3,12 +3,10 @@
 {% load staticfiles %}
 
 {% block document %}
-<div class="page-header">
-  <form class="form-search row-fluid" method="get" action="{% url 'answers_search' %}">
-    <div class="input-append row-fluid">
-      <input type="text" class="span10 search-query" name="q">
-      <input type="submit" class="btn btn-primary" value="{% trans 'Search' %}" />
-    </div>
+<div>
+  <form method="get" action="{% url 'answers_search' %}">
+    <input type="text" name="q">
+    <input type="submit" value="{% trans 'Search' %}" />
   </form>
   {% if query %}
   {{ results|length }} questions matching &quot;{{query}}&quot;

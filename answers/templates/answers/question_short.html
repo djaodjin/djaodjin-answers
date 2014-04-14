@@ -1,16 +1,13 @@
 {% load comments %}
-{% load staticfiles %}
 
 {% get_comment_count for question as answers_count %}
-<div class="media">
-  <div class="media-body">
-    <h4 class="media-header"><a href="{% url 'answers_detail' question.id %}">{{ question.title }}</a></h4>
-    <p>{{ question.text }}</p>
-    <div class="row-fluid">
-      <small>
-        <img src="{% static 'img/glyphicons_343_thumbs_up.png' %}" width="16" height="16">&nbsp;{{ question.votes.all|length }} vote{{question.votes.all|length|pluralize}}&nbsp;&nbsp;
-        <img src="{% static 'img/glyphicons_309_comments.png' %}" width="16" height="16">&nbsp;{{answers_count}} answer{{answers_count|pluralize}}
-      </small>
-    </div>
-  </div>
+<div>
+  <h4><a href="{% url 'answers_detail' question.id %}">{{ question.title }}</a></h4>
+  <p>{{ question.text }}</p>
+  <small>
+    <ul>
+      <li>{{ question.votes.all|length }} vote{{question.votes.all|length|pluralize}}</li>
+      <li>{{answers_count}} answer{{answers_count|pluralize}}</li>
+    </ul>
+  </small>
 </div>

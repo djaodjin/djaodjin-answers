@@ -7,7 +7,7 @@
 {% block document %}
 {% vote_by_user user on question as user_vote %}
 
-<div class="extra-padding">
+<div>
   <a href="{% url 'answers_list' %}">&lt; {% trans 'All Questions' %}</a>
 </div>
 
@@ -21,31 +21,30 @@
 
 <div>
   {% if not is_following %}
-  <form class="form-btn" method="post" action="{% url 'answers_follow' question.id %}">
-    <button type="submit" class="btn">{% trans 'Follow' %}</button>
+  <form method="post" action="{% url 'answers_follow' question.id %}">
+    <button type="submit">{% trans 'Follow' %}</button>
     {% csrf_token %}
   </form>
   {% else %}
-  <form class="form-btn" method="post" action="{% url 'answers_unfollow' question.id %}">
-    <button type="submit" class="btn">{% trans 'Unfollow' %}</button>
+  <form method="post" action="{% url 'answers_unfollow' question.id %}">
+    <button type="submit">{% trans 'Unfollow' %}</button>
     {% csrf_token %}
   </form>
   {% endif %}
   {% if user_vote %}
-  <div style="display: inline-block; padding-left: 1em;">
-    My vote: <img src="{% static 'img/glyphicons_343_thumbs_up.png' %}" title="{% trans 'Upvote' %}">
+  <div>
+    My vote: {% trans 'Upvote' %}
   </div>
   {% else %}
-  <form class="form-btn" method="post" action="{% url 'answers_vote' question.id 'up' %}">
-    <button type="submit" class="btn"><img src="{% static 'img/glyphicons_343_thumbs_up.png' %}" title="{% trans 'Upvote' %}"></button>
+  <form method="post" action="{% url 'answers_vote' question.id 'up' %}">
+    <button type="submit">{% trans 'Upvote' %}</button>
     {% csrf_token %}
   </form>
   {% endif %}
 </div>
 
-<div class="page-header">
+<div>
   {% get_comment_count for question as answers_count %}
-
   <h2>{{question.title}}</h2>
   <p>{{question.text}}</p>
   <em>Asked by {{question.user}}</em>
@@ -54,10 +53,10 @@
 <div>
   {% get_comment_list for question as answer_list %}
   {% for comment in answer_list %}
-  <div class="media">
+  <div>
     <a name="c{{ comment.id }}"></a>
-    <div class="media-body">
-      <h4 class="media-header"><a href="{% get_comment_permalink comment %}">#{{ forloop.counter }}</a>&nbsp;{{comment.user}}</h4>
+    <div>
+      <h4><a href="{% get_comment_permalink comment %}">#{{ forloop.counter }}</a>&nbsp;{{comment.user}}</h4>
       <p>
         {{comment.comment}}
       </p>
@@ -68,7 +67,7 @@
 
   {% if user.is_authenticated %}
   {% get_comment_form for question as form %}
-  <form class="form-comment" action="{% comment_form_target %}" method="POST">
+  <form action="{% comment_form_target %}" method="POST">
     <fieldset>
       <legend>My Answer:</legend>
       {% csrf_token %}
@@ -80,7 +79,7 @@
       <input type="hidden" name="next" value="{% url 'answers_detail' question.id %}" />
 
       {{ form.comment }}
-      <input class="btn btn-primary" type="submit" value="Submit" id="id_submit" />
+      <input type="submit" value="Submit" id="id_submit" />
     </fieldset>
   </form>
   {% else %}
@@ -92,13 +91,12 @@
 
 {% block sidebar %}
 {% score_for_object question as score %}
-
-<ul class="unstyled">
+<ul>
 <!-- XXX
     referer: {{question.referer}}
 -->
-  <li class="extra-padding"><img src="{% static 'img/glyphicons_343_thumbs_up.png' %}" width="32" height="32">&nbsp;&nbsp;{{ score.num_votes }} vote{{ score.num_votes|pluralize }}</li>
-  <li class="extra-padding"><img src="{% static 'img/glyphicons_024_parents.png' %}" width="32" height="32">&nbsp;&nbsp;{{ question.followers.all|length }} follower{{ question.followers.all|length|pluralize }}</li>
-  <li class="extra-padding"><img src="{% static 'img/glyphicons_045_calendar.png' %}" width="32" height="32">&nbsp;&nbsp;{{question.submit_date|date:"M d, Y"}}</li>
+  <li>{{ score.num_votes }} vote{{ score.num_votes|pluralize }}</li>
+  <li>{{ question.followers.all|length }} follower{{ question.followers.all|length|pluralize }}</li>
+  <li>{{question.submit_date|date:"M d, Y"}}</li>
 </ul>
 {% endblock %}

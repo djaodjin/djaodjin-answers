@@ -2,11 +2,11 @@
 {% load i18n %}
 
 {% block content %}
-<div class="container-fluid">
+<div>
   <form method="post" action="./?next={{ next }}">
-    {{ form.as_p }}
-    <input type="submit" class="btn btn-primary" value="{% trans 'Login' %}" />
     {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="{% trans 'Login' %}" />
   </form>
 </div>
 {% endblock %}
