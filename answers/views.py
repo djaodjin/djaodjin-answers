@@ -134,9 +134,13 @@ class QuestionVoteView(SingleObjectMixin, View):
             request, model=Question,
             direction=direction,
             object_id=self.object.pk,
+            post_vote_redirect=self.get_redirect_url(),
             template_object_name='vote',
             template_name='answers/link_confirm_vote.html',
             allow_xmlhttprequest=True)
+
+    def get_redirect_url(self, *args, **kwargs):
+        return self.object.get_absolute_url()
 
 
 class QuestionFollowView(SingleObjectMixin, RedirectView):
