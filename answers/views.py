@@ -139,7 +139,7 @@ class QuestionVoteView(SingleObjectMixin, View):
             template_name='answers/link_confirm_vote.html',
             allow_xmlhttprequest=True)
 
-    def get_redirect_url(self, *args, **kwargs):
+    def get_redirect_url(self, *args, **kwargs): #pylint: disable=unused-argument
         return self.object.get_absolute_url()
 
 
