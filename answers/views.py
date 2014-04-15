@@ -25,9 +25,9 @@
 import logging
 
 from django.contrib import messages
-from django.shortcuts import redirect
 from django.utils.translation import ugettext as _
-from django.views.generic import CreateView, ListView, TemplateView, View
+from django.views.generic import (CreateView, ListView, RedirectView,
+    TemplateView, View)
 from django.views.generic.detail import SingleObjectMixin, DetailView
 from haystack.query import SearchQuerySet
 from voting.views import vote_on_object
@@ -139,31 +139,38 @@ class QuestionVoteView(SingleObjectMixin, View):
             allow_xmlhttprequest=True)
 
 
-class QuestionFollowView(SingleObjectMixin, View):
+class QuestionFollowView(SingleObjectMixin, RedirectView):
     """
     Start following comments on a Question
     """
     model = Question
 
-    def post(self, request, *args, **kwargs): #pylint: disable=unused-argument
+    def get_redirect_url(self, *args, **kwargs):
+        return self.object.get_absolute_url()
+
+    def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         Follow.objects.subscribe(request.user, self.object)
         messages.success(request,
             _('You will now receive an e-mail for new comments on "%s".'
               % self.object.title))
-        return redirect(self.object)
+        return super(QuestionFollowView, self).post(request, *args, **kwargs)
 
 
-class QuestionUnfollowView(SingleObjectMixin, View):
+class QuestionUnfollowView(SingleObjectMixin, RedirectView):
     """
     Stop following comments on a Question
     """
     model = Question
 
-    def post(self, request, *args, **kwargs): #pylint: disable=unused-argument
+    def get_redirect_url(self, *args, **kwargs):
+        return self.object.get_absolute_url()
+
+    def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         Follow.objects.unsubscribe(request.user, self.object)
         messages.success(request,
         _('You will no longer receive e-mails for additional comments on "%s".'
           % self.object.title))
-        return redirect(self.object)
+        return super(QuestionUnfollowView, self).post(request, *args, **kwargs)
+
