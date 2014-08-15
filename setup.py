@@ -31,7 +31,7 @@ setup(
     version=__version__,
     author='The DjaoDjin Team',
     author_email='support@djaodjin.com',
-    packages=['answers'],
+    packages=['answers', 'answers.urls'],
     package_data={'answers': ['templates/answers/*']},
     license='BSD',
     description='Q&A forum Django app',
