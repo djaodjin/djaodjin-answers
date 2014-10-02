@@ -25,8 +25,6 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 
-from answers.compat import User
-
 
 class FollowManager(models.Manager):
 
@@ -35,6 +33,7 @@ class FollowManager(models.Manager):
         """
         Get a list of followers for a Question.
         """
+        from answers.compat import User # django 1.7 "Models aren't loaded yet"
         ctype = ContentType.objects.get_for_model(question)
         object_id = question.id
         return User.objects.filter(

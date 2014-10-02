@@ -30,3 +30,5 @@ contain the appropriate settings.
 from django.conf import settings
 
 OBJECT_TITLE = getattr(settings, 'ANSWERS_OBJECT_TITLE', 'question')
+
+AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
