@@ -99,6 +99,8 @@ class QuestionCreateView(CreateView):
     prefix = 'question'
 
     def form_valid(self, form):
+        if not self.request.user.is_authenticated():
+            return self.form_invalid(form)
         result = super(QuestionCreateView, self).form_valid(form)
         messages.success(self.request, _("Thank you for your question !"))
         # Send notification to the staff that a Question was created.
@@ -109,8 +111,9 @@ class QuestionCreateView(CreateView):
 
     def get_initial(self):
         kwargs = super(QuestionCreateView, self).get_initial()
-        kwargs.update({'referer': self.request.GET.get("referer", None),
-            'user': self.request.user})
+        kwargs.update({'referer': self.request.GET.get("referer", None)})
+        if self.request.user.is_authenticated():
+            kwargs.update({'user': self.request.user})
         return kwargs
 
 
