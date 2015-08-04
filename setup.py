@@ -1,4 +1,4 @@
-# Copyright (c) 2014, DjaoDjin inc.
+# Copyright (c) 2015, DjaoDjin inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,13 +26,24 @@ from distutils.core import setup
 
 from answers import __version__
 
+requirements = []
+with open('./requirements.txt') as requirements_txt:
+    for line in requirements_txt:
+        prerequisite = line.split('#')[0].strip()
+        if prerequisite:
+            requirements += [prerequisite]
+
 setup(
     name='djaodjin-answers',
     version=__version__,
-    author='The DjaoDjin Team',
+    author='DjaoDjin inc.',
     author_email='support@djaodjin.com',
+    install_requires=requirements,
     packages=['answers', 'answers.urls'],
     package_data={'answers': ['templates/answers/*']},
+    url='https://github.com/djaodjin/djaodjin-answers/',
+    download_url='https://github.com/djaodjin/djaodjin-answers/tarball/%s' \
+        % __version__,
     license='BSD',
     description='Q&A forum Django app',
     long_description=open('README.md').read(),

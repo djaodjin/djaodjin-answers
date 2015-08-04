@@ -1,4 +1,4 @@
-# Copyright (c) 2014, DjaoDjin inc.
+# Copyright (c) 2015, DjaoDjin inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -65,7 +65,7 @@ class Question(models.Model):
     referer = models.TextField(verbose_name=_('Referer'), blank=True, null=True)
     title = models.CharField(verbose_name=_('Title'), max_length=255)
     text = models.TextField(verbose_name=_('Text'),
-                     help_text=_("Question being asked"))
+                     help_text=_("Enter your question here"))
     votes = generic.GenericRelation('voting.Vote',
                                     object_id_field="object_id",
                                     content_type_field="content_type")

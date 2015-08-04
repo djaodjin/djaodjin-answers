@@ -14,3 +14,7 @@ install::
 initdb:
 	-rm -f db.sqlite3
 	cd $(srcDir) && $(PYTHON) ./manage.py syncdb
+
+clean:
+	-rm db.sqlite3
+
