@@ -16,5 +16,5 @@ initdb:
 	cd $(srcDir) && $(PYTHON) ./manage.py syncdb
 
 clean:
-	-rm db.sqlite3
+	-rm -rf db.sqlite3 MANIFEST dist build
 
