@@ -26,4 +26,4 @@
 Community forum for Questions and Answers.
 """
 
-__version__ = '0.1.2'
+__version__ = '0.1.3-dev'

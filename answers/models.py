@@ -61,7 +61,8 @@ class Question(models.Model):
         ordering = ('-submit_date',)
 
     submit_date = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='user_id')
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, db_column='user_id', null=True)
     referer = models.TextField(verbose_name=_('Referer'), blank=True, null=True)
     title = models.CharField(verbose_name=_('Title'), max_length=255)
     text = models.TextField(verbose_name=_('Text'),
