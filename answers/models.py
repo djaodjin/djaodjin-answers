@@ -60,6 +60,7 @@ class Question(models.Model):
     class Meta:
         ordering = ('-submit_date',)
 
+    slug = models.SlugField(unique=True)
     submit_date = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, db_column='user_id', null=True)
