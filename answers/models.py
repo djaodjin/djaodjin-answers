@@ -1,4 +1,4 @@
-# Copyright (c) 2015, DjaoDjin inc.
+# Copyright (c) 2016, DjaoDjin inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -23,11 +23,11 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from django.db import models
-from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 
 from . import settings
+from .compat import GenericForeignKey, GenericRelation
 from .managers import FollowManager
 
 
@@ -38,7 +38,7 @@ class Follow(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='user_id')
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    object = generic.GenericForeignKey('content_type', 'object_id')
+    object = GenericForeignKey('content_type', 'object_id')
     time_stamp = models.DateTimeField(editable=False, auto_now_add=True)
 
     objects = FollowManager()
@@ -68,12 +68,10 @@ class Question(models.Model):
     title = models.CharField(verbose_name=_('Title'), max_length=255)
     text = models.TextField(verbose_name=_('Text'),
                      help_text=_("Enter your question here"))
-    votes = generic.GenericRelation('voting.Vote',
-                                    object_id_field="object_id",
-                                    content_type_field="content_type")
-    followers = generic.GenericRelation(Follow,
-                                    object_id_field="object_id",
-                                    content_type_field="content_type")
+    votes = GenericRelation('voting.Vote',
+        object_id_field="object_id", content_type_field="content_type")
+    followers = GenericRelation(Follow,
+        object_id_field="object_id", content_type_field="content_type")
 
     def __unicode__(self):
         return self.title

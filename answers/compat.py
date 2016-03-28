@@ -1,4 +1,4 @@
-# Copyright (c) 2014, DjaoDjin inc.
+# Copyright (c) 2016, DjaoDjin inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -22,9 +22,18 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#pylint: disable=invalid-name,unused-import,import-error
+
 try:
     from django.contrib.auth import get_user_model
 except ImportError: # django < 1.5
-    from django.contrib.auth.models import User #pylint: disable=unused-import
-else:
-    User = get_user_model()                     #pylint: disable=invalid-name
+    def get_user_model():
+        from django.contrib.auth.models import User
+        return User
+
+try:
+    from django.contrib.contenttypes.fields import (
+        GenericForeignKey, GenericRelation)
+except ImportError: # django < 1.8
+    from django.contrib.contenttypes.generic import (
+        GenericForeignKey, GenericRelation)
