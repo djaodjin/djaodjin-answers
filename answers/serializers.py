@@ -21,18 +21,17 @@
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+from __future__ import unicode_literals
 
-from urldecorators import include, url
-from django.contrib import admin
+from rest_framework import serializers
 
-admin.autodiscover()
+from .models import get_question_model
 
-urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
-    url(r'^api/', include('answers.urls.api')),
-    url(r'^comments/', include('django_comments.urls')),
-    url(r'^', include('answers.urls.query')),
-    url(r'^', include('answers.urls.update'),
-        decorators=['django.contrib.auth.decorators.login_required']),
-]
+
+class QuestionSummarySerializer(serializers.ModelSerializer):
+    #pylint: disable=no-init
+
+    class Meta(object):
+        model = get_question_model()
+        fields = ('slug', 'title')
+        read_only_fields = ('slug', 'title')

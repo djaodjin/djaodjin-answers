@@ -21,18 +21,33 @@
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+from __future__ import unicode_literals
 
-from urldecorators import include, url
-from django.contrib import admin
+from django.db.models import Sum
 
-admin.autodiscover()
+from .models import get_question_model
 
-urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
-    url(r'^api/', include('answers.urls.api')),
-    url(r'^comments/', include('django_comments.urls')),
-    url(r'^', include('answers.urls.query')),
-    url(r'^', include('answers.urls.update'),
-        decorators=['django.contrib.auth.decorators.login_required']),
-]
+
+class QuestionMixin(object):
+
+    lookup_field = 'slug'
+    model = get_question_model()
+
+    def get_queryset(self):
+        return self.model.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(QuestionMixin, self).get_context_data(**kwargs)
+        context.update({
+            'nb_followers': self.object.followers.all().count(),
+            'votes_score': self.object.votes.all().annotate(Sum('vote')).get(
+                'sum_vote', 0)
+        })
+        if self.request.user.is_authenticated:
+            context.update({
+                'is_following': self.object.followers.filter(
+                    user=self.request.user).exists(),
+                'is_voted': self.object.votes.filter(
+                    user=self.request.user).exists()
+            })
+        return context

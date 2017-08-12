@@ -1,4 +1,4 @@
-# Copyright (c) 2014, DjaoDjin inc.
+# Copyright (c) 2017, DjaoDjin inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,32 +26,24 @@ import logging
 
 from django.contrib import messages
 from django.utils.translation import ugettext as _
-from django.views.generic import (CreateView, ListView, RedirectView,
-    TemplateView, View)
-from django.views.generic.detail import SingleObjectMixin, DetailView
+from django.views.generic import (CreateView, ListView, TemplateView)
+from django.views.generic.detail import DetailView
 from haystack.query import SearchQuerySet
-from voting.views import vote_on_object
 
-from answers.models import Follow, Question
-from answers.forms import QuestionCreateForm
-from answers import signals
+from . import signals
+from .models import Follow, get_question_model
+from .mixins import QuestionMixin
+from .forms import QuestionCreateForm
 
 LOGGER = logging.getLogger(__name__)
 
 
-class QuestionDetailView(DetailView):
+class QuestionDetailView(QuestionMixin, DetailView):
     """
     Generic view for a single Question.
     """
 
-    model = Question
-
-    def get_context_data(self, **kwargs):
-        context = super(QuestionDetailView, self).get_context_data(**kwargs)
-        if self.request.user.is_authenticated:
-            context['is_following'] = Follow.objects.get_followers(
-                kwargs['object']).filter(pk=self.request.user.id).exists()
-        return context
+    model = get_question_model()
 
 
 class QuestionListView(ListView):
@@ -59,7 +51,7 @@ class QuestionListView(ListView):
     Generic view of a list of Questions.
     """
 
-    model = Question
+    model = get_question_model()
 
     def get_context_data(self, **kwargs):
         context = super(QuestionListView, self).get_context_data(**kwargs)
@@ -71,6 +63,7 @@ class QuestionSearchView(TemplateView):
     Search for Questions matching 'q'.
     """
     limit = 10
+    model = get_question_model()
     template_name = 'answers/question_search.html'
 
     def get_context_data(self, **kwargs):
@@ -81,7 +74,8 @@ class QuestionSearchView(TemplateView):
             # XXX search broken until new release of haystack compatible with
             # Django 1.6:
             #   https://github.com/toastdriven/django-haystack/issues/908
-            results = SearchQuerySet().models(Question).filter_or(content=query)
+            results = SearchQuerySet().models(self.model).filter_or(
+                content=query)
             if self.limit:
                 results = results[:int(self.limit)]
         context.update({'results': results, 'query': query})
@@ -93,7 +87,7 @@ class QuestionCreateView(CreateView):
     Create a new question.
     """
 
-    model = Question
+    model = get_question_model()
     form_class = QuestionCreateForm
     template_name = 'answers/question_new.html'
     prefix = 'question'
@@ -106,7 +100,7 @@ class QuestionCreateView(CreateView):
         # Send notification to the staff that a Question was created.
         signals.question_new.send(
             sender=__name__, question=self.object, request=self.request)
-        Follow.objects.subscribe(self.request.user, self.object)
+        Follow.objects.subscribe(self.object, user=self.request.user)
         return result
 
     def get_initial(self):
@@ -115,69 +109,3 @@ class QuestionCreateView(CreateView):
         if self.request.user.is_authenticated():
             kwargs.update({'user': self.request.user})
         return kwargs
-
-
-class QuestionVoteView(SingleObjectMixin, View):
-    """
-    Vote a Question up/down
-    """
-    model = Question
-
-    def post(self, request, *args, **kwargs): #pylint: disable=unused-argument
-        # Auto subscribe User when he/she upvoted a question.
-        self.object = self.get_object()
-        direction = kwargs.get('direction', 'up')
-        if direction == 'up':
-            Follow.objects.subscribe(request.user, self.object)
-            messages.success(request,
-                _('You will now receive an e-mail for new comments on "%s".'
-                  % self.object.title))
-
-        return vote_on_object(
-            request, model=Question,
-            direction=direction,
-            object_id=self.object.pk,
-            post_vote_redirect=self.get_redirect_url(),
-            template_object_name='vote',
-            template_name='answers/link_confirm_vote.html',
-            allow_xmlhttprequest=True)
-
-    def get_redirect_url(self, *args, **kwargs): #pylint: disable=unused-argument
-        return self.object.get_absolute_url()
-
-
-class QuestionFollowView(SingleObjectMixin, RedirectView):
-    """
-    Start following comments on a Question
-    """
-    model = Question
-
-    def get_redirect_url(self, *args, **kwargs):
-        return self.object.get_absolute_url()
-
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        Follow.objects.subscribe(request.user, self.object)
-        messages.success(request,
-            _('You will now receive an e-mail for new comments on "%s".'
-              % self.object.title))
-        return super(QuestionFollowView, self).post(request, *args, **kwargs)
-
-
-class QuestionUnfollowView(SingleObjectMixin, RedirectView):
-    """
-    Stop following comments on a Question
-    """
-    model = Question
-
-    def get_redirect_url(self, *args, **kwargs):
-        return self.object.get_absolute_url()
-
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        Follow.objects.unsubscribe(request.user, self.object)
-        messages.success(request,
-        _('You will no longer receive e-mails for additional comments on "%s".'
-          % self.object.title))
-        return super(QuestionUnfollowView, self).post(request, *args, **kwargs)
-

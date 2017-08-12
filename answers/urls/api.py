@@ -22,17 +22,21 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from urldecorators import include, url
-from django.contrib import admin
+from django.conf.urls import url
 
-admin.autodiscover()
+from .. import settings
+from .. import api
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
-    url(r'^api/', include('answers.urls.api')),
-    url(r'^comments/', include('django_comments.urls')),
-    url(r'^', include('answers.urls.query')),
-    url(r'^', include('answers.urls.update'),
-        decorators=['django.contrib.auth.decorators.login_required']),
+    # Following
+    url(r'^(?P<slug>%s)/follow/' % settings.SLUG_RE,
+        api.FollowAPIView.as_view(), name='answers_api_follow'),
+    url(r'^(?P<slug>%s)/unfollow/' % settings.SLUG_RE,
+        api.UnfollowAPIView.as_view(), name='answers_api_unfollow'),
+
+    # Votes
+    url(r'^(?P<slug>%s)/upvote/'  % settings.SLUG_RE,
+        api.UpvoteAPIView.as_view(), name='answers_api_upvote'),
+    url(r'^(?P<slug>%s)/downvote/'  % settings.SLUG_RE,
+        api.DownvoteAPIView.as_view(), name='answers_api_downvote'),
 ]

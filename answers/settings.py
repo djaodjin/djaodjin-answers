@@ -1,4 +1,4 @@
-# Copyright (c) 2014, DjaoDjin inc.
+# Copyright (c) 2017, DjaoDjin inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -24,11 +24,20 @@
 
 """
 Convenience module for access of djaodjin-answers application settings,
-# which enforces default settings when the main settings module does not
+which enforces default settings when the main settings module does not
 contain the appropriate settings.
 """
 from django.conf import settings
 
-OBJECT_TITLE = getattr(settings, 'ANSWERS_OBJECT_TITLE', 'question')
+_SETTINGS = {
+    'ACCOUNT_MODEL': getattr(settings, 'AUTH_USER_MODEL'),
+    'QUESTION_MODEL': 'answers.Question'
+}
+_SETTINGS.update(getattr(settings, 'ANSWERS', {}))
 
-AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
+
+ACCOUNT_MODEL = _SETTINGS.get('ACCOUNT_MODEL')
+AUTH_USER_MODEL = getattr(
+    settings, 'AUTH_USER_MODEL', 'django.contrib.auth.models.User')
+QUESTION_MODEL = _SETTINGS.get('QUESTION_MODEL')
+SLUG_RE = '[a-zA-Z0-9-]+'

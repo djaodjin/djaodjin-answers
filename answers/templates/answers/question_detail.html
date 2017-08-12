@@ -1,12 +1,9 @@
 {% extends "answers/base.html" %}
 {% load i18n %}
 {% load comments %}
-{% load voting_tags %}
 {% load staticfiles %}
 
 {% block document %}
-{% vote_by_user user on question as user_vote %}
-
 <div>
   <a href="{% url 'answers_list' %}">&lt; {% trans 'All Questions' %}</a>
 </div>
@@ -20,26 +17,17 @@
 {% endif %}
 
 <div>
-  {% if not is_following %}
-  <form method="post" action="{% url 'answers_follow' question.id %}">
-    <button type="submit">{% trans 'Follow' %}</button>
-    {% csrf_token %}
-  </form>
+  {% if is_following %}
+  <button type="submit" class="dj-answers-unfollow">{% trans 'Unfollow' %}</button>
   {% else %}
-  <form method="post" action="{% url 'answers_unfollow' question.id %}">
-    <button type="submit">{% trans 'Unfollow' %}</button>
-    {% csrf_token %}
-  </form>
+  <button type="submit" class="dj-answers-follow">{% trans 'Follow' %}</button>
   {% endif %}
-  {% if user_vote %}
+  {% if is_user_vote %}
   <div>
     My vote: {% trans 'Upvote' %}
   </div>
   {% else %}
-  <form method="post" action="{% url 'answers_vote' question.id 'up' %}">
-    <button type="submit">{% trans 'Upvote' %}</button>
-    {% csrf_token %}
-  </form>
+  <button type="submit" class="dj-answers-upvote">{% trans 'Upvote' %}</button>
   {% endif %}
 </div>
 
@@ -60,7 +48,7 @@
       <p>
         {{comment.comment}}
       </p>
-      <small>{{comment.submit_date|date:"M d, Y"}}</small>
+      <small>{{comment.created_at|date:"M d, Y"}}</small>
     </div>
   </div>
   {% endfor %}
@@ -90,13 +78,26 @@
 {% endblock %}
 
 {% block sidebar %}
-{% score_for_object question as score %}
 <ul>
 <!-- XXX
     referer: {{question.referer}}
 -->
-  <li>{{ score.num_votes }} vote{{ score.num_votes|pluralize }}</li>
-  <li>{{ question.followers.all|length }} follower{{ question.followers.all|length|pluralize }}</li>
-  <li>{{question.submit_date|date:"M d, Y"}}</li>
+  <li>{{ votes_score }} vote{{ votes_score|pluralize }}</li>
+  <li>{{ nb_followers }} follower{{ nb_followers|pluralize }}</li>
+  <li>{{question.created_at|date:"M d, Y"}}</li>
 </ul>
+{% endblock %}
+
+{% block bodyscripts %}
+{{block.super}}
+{% if request|is_broker_manager %}
+<script type="text/javascript" charset="utf-8">
+$(document).ready(function(){
+	$(".dj-answers-actions").djForumQuestion({
+		api_follow: "{% url 'answers_api_follow' best_practice %}",
+		api_unfollow: "{% url 'answers_api_unfollow' best_practice %}",
+		api_upvote: "{% url 'answers_api_upvote' best_practice %}",
+		api_downvote: "{% url 'answers_api_downvote' best_practice %}"
+	});
+</script>
 {% endblock %}

@@ -1,4 +1,4 @@
-# Copyright (c) 2014, DjaoDjin inc.
+# Copyright (c) 2017, DjaoDjin inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -22,20 +22,10 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-from answers import views
+from .. import views
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^ask/$', views.QuestionCreateView.as_view(), name='answers_new'),
-
-    # Following
-    url(r'^(?P<pk>\d+)/follow/',
-        views.QuestionFollowView.as_view(), name='answers_follow'),
-    url(r'^(?P<pk>\d+)/unfollow/',
-        views.QuestionUnfollowView.as_view(), name='answers_unfollow'),
-
-    # Votes
-    url(r'^(?P<pk>\d+)/(?P<direction>up)vote/',
-        views.QuestionVoteView.as_view(), name='answers_vote'),
-)
+]
