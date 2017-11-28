@@ -40,7 +40,8 @@ setup(
     author_email='support@djaodjin.com',
     install_requires=requirements,
     packages=['answers', 'answers.urls'],
-    package_data={'answers': ['templates/answers/*']},
+    package_data={'answers': ['static/css/*', 'static/js/*',
+        'templates/answers/*']},
     url='https://github.com/djaodjin/djaodjin-answers/',
     download_url='https://github.com/djaodjin/djaodjin-answers/tarball/%s' \
         % __version__,
