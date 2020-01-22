@@ -1,4 +1,4 @@
-# Copyright (c) 2017, DjaoDjin inc.
+# Copyright (c) 2020, DjaoDjin inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -23,6 +23,7 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 from __future__ import unicode_literals
 
+from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 
 from .models import get_question_model
@@ -30,6 +31,10 @@ from .models import get_question_model
 
 class QuestionSummarySerializer(serializers.ModelSerializer):
     #pylint: disable=no-init
+    slug = serializers.SlugField(help_text=_(
+        "unique identifier for the question. It can be used in a URL."))
+    title = serializers.CharField(max_length=255,
+        help_text=_("Short description of the question."))
 
     class Meta(object):
         model = get_question_model()

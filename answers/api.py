@@ -1,4 +1,4 @@
-# Copyright (c) 2017, DjaoDjin inc.
+# Copyright (c) 2020, DjaoDjin inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,29 @@ from .serializers import QuestionSummarySerializer
 
 
 class FollowAPIView(QuestionMixin, generics.CreateAPIView):
+    """
+    Follow an answer
 
+    The authenticated user making the request will receive notification
+    whenever someone comments on the answer.
+
+    **Tags**: answers
+
+    **Examples**
+
+    .. code-block:: http
+
+         POST /api/suppliers/water-use/follow/ HTTP/1.1
+
+    responds
+
+    .. code-block:: json
+
+        {
+            "slug": "water-user",
+            "title": "How to reduce water usage?"
+        }
+    """
     serializer_class = QuestionSummarySerializer
 
     def create(self, request, *args, **kwargs):
@@ -49,7 +71,29 @@ class FollowAPIView(QuestionMixin, generics.CreateAPIView):
 
 
 class UnfollowAPIView(QuestionMixin, generics.CreateAPIView):
+    """
+    Unfollow an answer
 
+    The authenticated user making the request will stop receiving notification
+    whenever someone comments on the answer.
+
+    **Tags**: answers
+
+    **Examples**
+
+    .. code-block:: http
+
+         POST /api/suppliers/water-use/unfollow/ HTTP/1.1
+
+    responds
+
+    .. code-block:: json
+
+        {
+            "slug": "water-user",
+            "title": "How to reduce water usage?"
+        }
+    """
     serializer_class = QuestionSummarySerializer
 
     def create(self, request, *args, **kwargs):
@@ -67,7 +111,29 @@ class UnfollowAPIView(QuestionMixin, generics.CreateAPIView):
 
 
 class UpvoteAPIView(QuestionMixin, generics.CreateAPIView):
+    """
+    Upvote an answer
 
+    The authenticated user making the request indicates their support
+    for the answer.
+
+    **Tags**: answers
+
+    **Examples**
+
+    .. code-block:: http
+
+         POST /api/suppliers/water-use/upvote/ HTTP/1.1
+
+    responds
+
+    .. code-block:: json
+
+        {
+            "slug": "water-user",
+            "title": "How to reduce water usage?"
+        }
+    """
     serializer_class = QuestionSummarySerializer
 
     def perform_create(self, serializer):
@@ -76,7 +142,29 @@ class UpvoteAPIView(QuestionMixin, generics.CreateAPIView):
 
 
 class DownvoteAPIView(QuestionMixin, generics.CreateAPIView):
+    """
+    Downvote an answer
 
+    The authenticated user making the request indicates their opposition
+    to the answer.
+
+    **Tags**: answers
+
+    **Examples**
+
+    .. code-block:: http
+
+         POST /api/suppliers/water-use/downvote/ HTTP/1.1
+
+    responds
+
+    .. code-block:: json
+
+        {
+            "slug": "water-user",
+            "title": "How to reduce water usage?"
+        }
+    """
     serializer_class = QuestionSummarySerializer
 
     def perform_create(self, serializer):

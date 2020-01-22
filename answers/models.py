@@ -1,4 +1,4 @@
-# Copyright (c) 2017, DjaoDjin inc.
+# Copyright (c) 2020, DjaoDjin inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -67,9 +67,9 @@ class Follow(models.Model):
 
     created_at = models.DateTimeField(editable=False, auto_now_add=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='user_id',
-         related_name='follows')
+         related_name='follows', on_delete=models.CASCADE)
     question = models.ForeignKey(settings.QUESTION_MODEL,
-        related_name='followers')
+        related_name='followers', on_delete=models.CASCADE)
 
     class Meta:
         unique_together = (('user', 'question'),)
@@ -89,10 +89,12 @@ class Question(models.Model):
     can be associated to a Question.
     """
     created_at = models.DateTimeField(editable=False, auto_now_add=True)
-    slug = models.SlugField(unique=True)
-    title = models.CharField(verbose_name=_('Title'), max_length=255)
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, db_column='user_id', null=True)
+    slug = models.SlugField(unique=True, help_text=_(
+        "unique identifier for the question. It can be used in a URL."))
+    title = models.CharField(verbose_name=_('Title'), max_length=255,
+        help_text=_("Short description of the question."))
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='user_id',
+            null=True, on_delete=models.CASCADE)
     referer = models.TextField(verbose_name=_('Referer'), blank=True, null=True)
     text = models.TextField(verbose_name=_('Text'),
                      help_text=_("Enter your question here"))
@@ -139,9 +141,9 @@ class Vote(models.Model):
     )
 
     created_at = models.DateTimeField(editable=False, auto_now_add=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     question = models.ForeignKey(settings.QUESTION_MODEL,
-        related_name='votes')
+        related_name='votes', on_delete=models.CASCADE)
     vote = models.SmallIntegerField(choices=SCORES)
 
     class Meta:
