@@ -1,4 +1,4 @@
-# Copyright (c) 2017, DjaoDjin inc.
+# Copyright (c) 2020, DjaoDjin inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,4 +26,4 @@
 Community forum for Questions and Answers.
 """
 
-__version__ = '0.1.6-dev'
+__version__ = '0.1.6'
