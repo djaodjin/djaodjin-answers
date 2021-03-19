@@ -2,4 +2,4 @@ Django==1.9.9
 django-haystack==2.1.0
 django-urldecorators==0.6
 django-contrib-comments==1.6.2
-djangorestframework==3.3.3
+djangorestframework==3.11.2
